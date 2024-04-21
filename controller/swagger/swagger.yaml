@@ -1,0 +1,654 @@
+openapi: 3.0.0
+
+servers:
+    - description: local
+      url: http://localhost:3000/
+    - description: WIP
+      url: https://api.tdinder.com/v1
+
+info:
+    description: tdinder API
+    version: '1.0.0'
+    title: tdinder API
+    contact:
+        email: davybellens123@gmail.com
+    license:
+        name: Apache 2.0
+        url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+
+tags:
+    - name: profiles
+    - name: files
+    - name: matches
+
+security:
+    - BearerAuth: []
+
+paths:
+    /signin:
+        post:
+            tags:
+                - profiles
+            summary: signin
+            description: |
+                Authenticate profile with email and password
+            requestBody:
+                $ref: '#/components/requestBodies/Signin'
+            responses:
+                '200':
+                    $ref: '#/components/responses/Authenicated'
+                '400':
+                    $ref: '#/components/responses/ApplicationError'
+
+    /signup:
+        post:
+            tags:
+                - profiles
+            summary: signup
+            description: |
+                Create a new profile
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ProfileInput'
+            responses:
+                '200':
+                    description: profile created
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: 'success'
+                                    message:
+                                        type: string
+                                        example: 'profile created'
+                                    profile:
+                                        $ref: '#/components/schemas/Profile'
+                '400':
+                    $ref: '#/components/responses/ApplicationError'
+
+    /profiles:
+        get:
+            tags:
+                - profiles
+            summary: get profiles
+            description: |
+                Get all profiles
+            responses:
+                '200':
+                    description: profiles found
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: 'success'
+                                    message:
+                                        type: string
+                                        example: 'profiles found'
+                                    profiles:
+                                        type: array
+                                        items:
+                                            $ref: '#/components/schemas/Profile'
+                '400':
+                    $ref: '#/components/responses/ApplicationError'
+                '401':
+                    $ref: '#/components/responses/Unauthorized'
+
+    /profiles/{id}:
+        get:
+            tags:
+                - profiles
+            summary: get profile
+            description: |
+                Get profile by id
+            parameters:
+                - name: id
+                  in: path
+                  description: profile id
+                  required: true
+                  schema:
+                      type: integer
+                      example: 1
+            responses:
+                '200':
+                    description: profile found
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: 'success'
+                                    message:
+                                        type: string
+                                        example: 'profile found'
+                                    profile:
+                                        $ref: '#/components/schemas/Profile'
+                '400':
+                    $ref: '#/components/responses/ApplicationError'
+                '401':
+                    $ref: '#/components/responses/Unauthorized'
+
+        put:
+            tags:
+                - profiles
+            summary: update profile
+            description: |
+                Update profile by id
+            parameters:
+                - name: id
+                  in: path
+                  description: profile id
+                  required: true
+                  schema:
+                      type: integer
+                      example: 1
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ProfileInput'
+            responses:
+                '200':
+                    description: profile updated
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: 'success'
+                                    message:
+                                        type: string
+                                        example: 'profile updated'
+                                    updatedProfile:
+                                        $ref: '#/components/schemas/Profile'
+                '400':
+                    $ref: '#/components/responses/ApplicationError'
+                '401':
+                    $ref: '#/components/responses/Unauthorized'
+
+        delete:
+            tags:
+                - profiles
+            summary: delete profile
+            description: |
+                Delete profile by id
+            parameters:
+                - name: id
+                  in: path
+                  description: profile id
+                  required: true
+                  schema:
+                      type: integer
+                      example: 1
+            responses:
+                '200':
+                    description: profile deleted
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: 'success'
+                                    message:
+                                        type: string
+                                        example: 'profile deleted'
+                                    deletedProfile:
+                                        $ref: '#/components/schemas/Profile'
+                '400':
+                    $ref: '#/components/responses/ApplicationError'
+                '401':
+                    $ref: '#/components/responses/Unauthorized'
+
+    /profiles/{id}/likes:
+        get:
+            tags:
+                - profiles
+            summary: get profile likes
+            description: |
+                Get profile likes by id
+            parameters:
+                - name: id
+                  in: path
+                  description: profile id
+                  required: true
+                  schema:
+                      type: integer
+                      example: 1
+            responses:
+                '200':
+                    description: profile likes found
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: 'success'
+                                    message:
+                                        type: string
+                                        example: 'likes created by profile'
+                                    profile:
+                                        type: object
+                                        properties:
+                                            id:
+                                                type: integer
+                                                example: 1
+                                            username:
+                                                type: string
+                                                example: 'JJ'
+                                            resourcelikes:
+                                                type: array
+                                                items:
+                                                    $ref: '#/components/schemas/ResourceLike'
+                                            commentlikes:
+                                                type: array
+                                                items:
+                                                    $ref: '#/components/schemas/CommentLike'
+                '400':
+                    $ref: '#/components/responses/ApplicationError'
+                '401':
+                    $ref: '#/components/responses/Unauthorized'
+    /files:
+        post:
+            tags:
+                - files
+            summary: uploadFile
+            description: |
+                Upload a file (PDF, JPG, JPEG, PNG, or ZIP)
+            requestBody:
+                content:
+                    multipart/form-data:
+                        schema:
+                            type: object
+                            properties:
+                                file:
+                                    type: string
+                                    format: binary
+            responses:
+                '200':
+                    description: File uploaded successfully
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: 'success'
+                                    message:
+                                        type: string
+                                        example: 'File uploaded successfully'
+                                    file:
+                                        type: object
+                                        properties:
+                                            fieldname:
+                                                type: string
+                                                example: 'file'
+                                            originalname:
+                                                type: string
+                                                example: 'example.pdf'
+                                            encoding:
+                                                type: string
+                                                example: '7bit'
+                                            mimetype:
+                                                type: string
+                                                example: 'application/pdf'
+                                            destination:
+                                                type: string
+                                                example: 'uploads/'
+                                            filename:
+                                                type: string
+                                                example: 'example.pdf'
+                                            path:
+                                                type: string
+                                                example: 'uploads/example.pdf'
+                                            size:
+                                                type: integer
+                                                example: 12345
+                '400':
+                    $ref: '#/components/responses/ApplicationError'
+    /files/{filename}:
+        get:
+            tags:
+                - files
+            summary: 'Download a file'
+            produces:
+                - 'application/octet-stream'
+            parameters:
+                - in: 'path'
+                  name: 'filename'
+                  type: 'string'
+                  required: true
+                  description: 'The name of the file to be downloaded'
+                  example: 'aple.jpg'
+            responses:
+                '200':
+                    description: 'File downloaded successfully'
+                '404':
+                    description: 'File not found'
+        delete:
+            tags:
+                - files
+            summary: 'Delete a file'
+            parameters:
+                - in: 'path'
+                  name: 'filename'
+                  type: 'string'
+                  required: true
+                  description: 'The name of the file to be deleted'
+            responses:
+                '200':
+                    description: 'File deleted successfully'
+                '404':
+                    description: 'File not found'
+    /matches:
+        get:
+            tags:
+                - matches
+            summary: 'Get matches'
+            responses:
+                '200':
+                    description: 'Matches are found'
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: 'success'
+                                    message:
+                                        type: string
+                                        example: 'all the matches'
+                                    matches:
+                                        type: array
+                                        items:
+                                            $ref: '#/components/schemas/Match'
+                '400':
+                    description: 'Not gret success'
+    /matches/match:
+        get:
+            tags:
+                - matches
+            summary: 'Get a match by its ID'
+            parameters:
+                - in: 'query'
+                  name: 'matchId'
+                  type: 'string'
+                  required: true
+                  example: 1
+            responses:
+                '200':
+                    description: 'Great success'
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: 'success'
+                                    message:
+                                        type: string
+                                        example: 'all the matches'
+                                    matches:
+                                        type: array
+                                        items:
+                                            $ref: '#/components/schemas/Match'
+                '400':
+                    $ref: '#/components/responses/ApplicationError'
+        post:
+            tags:
+                - matches
+            summary: 'Match two profiles'
+            parameters:
+                - in: 'query'
+                  name: 'profileId1'
+                  type: 'string'
+                  required: true
+                  example: 1
+                - in: 'query'
+                  name: 'profileId2'
+                  type: 'string'
+                  required: true
+                  example: 2
+            responses:
+                '200':
+                    description: 'The Match object'
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: 'success'
+                                    message:
+                                        type: string
+                                        example: 'succesfully unmatched profiles 1 and 2'
+                                    match:
+                                        $ref: '#/components/schemas/Match'
+    /matches/profile:
+        get:
+            tags:
+                - matches
+            summary: "Get all of a profile's matches"
+            parameters:
+                - in: 'query'
+                  name: 'profileId'
+                  type: 'string'
+                  required: true
+                  example: 1
+            responses:
+                '200':
+                    description: 'Matches are found'
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: 'success'
+                                    message:
+                                        type: string
+                                        example: 'all the matches'
+                                    matches:
+                                        type: array
+                                        items:
+                                            $ref: '#/components/schemas/Match'
+                '400':
+                    description: 'Not gret success'
+    /matches/unmatch:
+        delete:
+            tags:
+                - matches
+            summary: 'unmatch two people'
+            parameters:
+                - in: 'query'
+                  name: 'profileId1'
+                  type: 'string'
+                  required: true
+                  example: 1
+                - in: 'query'
+                  name: 'profileId2'
+                  type: 'string'
+                  required: true
+                  example: 2
+            responses:
+                '200':
+                    description: 'The deleted Match object'
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: 'success'
+                                    message:
+                                        type: string
+                                        example: 'all the matches'
+                                    match:
+                                        $ref: '#/components/schemas/Match'
+                '400':
+                    description: 'Not gret success'
+components:
+    securitySchemes:
+        BearerAuth:
+            type: http
+            scheme: bearer
+            bearerFormat: JWT
+
+    requestBodies:
+        Signin:
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        required:
+                            - email
+                            - password
+                        properties:
+                            email:
+                                type: string
+                                example: 'TDINDER_TEST_ADMIN@tdinder.com'
+                            password:
+                                type: string
+                                example: 'TD1nder69!!!'
+
+    responses:
+        Authenicated:
+            description: Authenticated
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            status:
+                                type: string
+                                example: 'success'
+                            message:
+                                type: string
+                                example: 'authentication successful'
+                            token:
+                                type: string
+                                example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNhdG9zaGlAdGlzdHVkZW50LmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTcwMzk0MzUzMiwiZXhwIjoxNzAzOTcyMzMyLCJpc3MiOiJ0aXN0dWRlbnRfYXBwIn0.M-kP0sNi9oAY7sCopgn9ioWuUbkNE8MgOMds5P8NQg0'
+                            email:
+                                type: string
+                                example: 'TDINDER_TEST_ADMIN@tdinder.com'
+                            id:
+                                type: integer
+                                example: 1
+                            role:
+                                type: string
+                                example: 'ADMIN'
+
+        Unauthorized:
+            description: Unauthorized
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            status:
+                                type: string
+                                example: 'error'
+                            message:
+                                type: string
+                                example: 'unauthorized'
+
+        ApplicationError:
+            description: Application Error
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            status:
+                                type: string
+                                example: 'error'
+                            message:
+                                type: string
+                                example: 'application error'
+
+    schemas:
+        ProfileInput:
+            type: object
+            required:
+                - email
+                - username
+                - password
+                - role
+            properties:
+                email:
+                    type: string
+                    example: 'TDINDER_TEST_ADMIN@tdinder.com'
+                username:
+                    type: string
+                    example: 'JJ'
+                password:
+                    type: string
+                    example: 'TD1nder69!!!'
+                role:
+                    type: string
+                    example: 'ADMIN'
+                bio:
+                    type: string
+                    example: 'example bio'
+
+        Profile:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    example: 1
+                createdAt:
+                    type: string
+                    example: '2023-12-29T14:41:55.854Z'
+                updatedAt:
+                    type: string
+                    example: '2023-12-29T14:41:55.854Z'
+                latestActivity:
+                    type: string
+                    example: '2023-12-29T14:41:55.854Z'
+                email:
+                    type: string
+                    example: 'TDINDER_TEST_ADMIN@tdinder.com'
+                username:
+                    type: string
+                    example: 'JJ'
+                password:
+                    type: string
+                    example: 'TD1nder69!!!'
+                role:
+                    type: string
+                    example: 'ADMIN'
+                bio:
+                    type: string
+                    example: 'example bio'
+        Match:
+            type: 'object'
+            properties:
+                id:
+                    type: integer
+                profileId1:
+                    type: integer
+                profileId2:
+                    type: integer
+                timestamp:
+                    type: string

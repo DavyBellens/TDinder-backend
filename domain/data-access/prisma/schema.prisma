@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgres"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum Preference {
+  MALE
+  FEMALE
+  BOTH
+  OTHER
+}
+
+enum Gender {
+  MAN
+  WOMAN
+  NON_BINARY
+  OTHER
+  SECRET
+}
+
+model Profile {
+  id                  Int         @id @default(autoincrement())
+  createdAt           DateTime    @default(now())
+  updatedAt           DateTime    @updatedAt
+  email               String      @unique
+  name                String
+  password            String
+  role                Role        @default(USER)
+  preference          Preference
+  age                 Int
+  gender              Gender
+  bio                 String?
+  interests           String[]
+  socials             String[]
+  pictures            String[]    @default(["default-profilePicture.jpg"])
+  swipes              Swipe[]     @relation("swipes")
+  swipedBy            Swipe[]     @relation("swipedBy")
+  matches             Match[]     @relation("matches")
+}
+
+enum Direction {
+  L
+  R
+}
+
+model Swipe {
+  id  Int   @id @default(autoincrement())
+  swiperId Int
+  swipeeId Int
+  direction Direction
+  swiper Profile @relation("swipes", references: [id], fields: [swiperId])
+  swipee Profile @relation("swipedBy", references: [id], fields: [swipeeId])
+}
+
+model Match {
+  id             Int              @id @default(autoincrement())
+  timestamp      DateTime         @default(now())
+  profileId1     Int
+  profileId2     Int
+  profiles       Profile[]        @relation("matches")
+}
