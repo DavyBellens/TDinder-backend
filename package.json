@@ -11,7 +11,8 @@
   },
   "scripts": {
     "test": "jest",
-    "start": "nodemon -L main.ts --delay 3"
+    "start": "nodemon -L main.ts --delay 3",
+    "postinstall": "prisma generate"
   },
   "nodemonConfig": {
     "ext": "ts",
