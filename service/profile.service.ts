@@ -301,41 +301,27 @@ const getAllPossibleMatches = async (preference: Preference, auth: any) => {
   if (preference === "FEMALE") {
     const womenProfiles = await profileDb.getAllProfilesByGender("WOMAN");
     if (womenProfiles) {
-      profiles.push(
-        ...womenProfiles.filter(
-          (p) => p.email != email && !swiped.includes(p.id)
-        )
-      );
+      profiles.push(...womenProfiles);
     }
   } else if (preference === "MALE") {
     const maleProfiles = await profileDb.getAllProfilesByGender("MAN");
     if (maleProfiles) {
-      profiles.push(
-        ...maleProfiles.filter(
-          (p) => p.email != email && !swiped.includes(p.id)
-        )
-      );
+      profiles.push(...maleProfiles);
     }
   } else if (preference === "BOTH") {
     const womenProfiles = await profileDb.getAllProfilesByGender("WOMAN");
     const maleProfiles = await profileDb.getAllProfilesByGender("MAN");
     if (womenProfiles && maleProfiles)
       profiles.push(
-        ...womenProfiles.filter(
-          (p) => p.email != email && !swiped.includes(p.id)
-        ),
-        ...maleProfiles.filter(
-          (p) => p.email != email && !swiped.includes(p.id)
-        )
+        ...womenProfiles,
+
+        ...maleProfiles
       );
   } else if (preference === "OTHER") {
     const everyone = await profileDb.getAllProfiles();
-    if (everyone)
-      profiles.push(
-        ...everyone.filter((p) => p.email != email && !swiped.includes(p.id))
-      );
+    if (everyone) profiles.push(...everyone);
   }
-  return profiles;
+  return profiles.filter((p) => p.email != email && !swiped.includes(p.id));
 };
 
 export default {
