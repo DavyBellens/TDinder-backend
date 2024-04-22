@@ -7,6 +7,7 @@ import { authRouter } from "../controller/auth.routes";
 import { matchRouter } from "../controller/match.routes";
 import { profileRouter } from "../controller/profile.routes";
 import { swipeRouter } from "../controller/swipe.routes";
+import { fileRouter } from "../controller/file.routes";
 
 const app = express();
 
@@ -23,6 +24,7 @@ app.use(
 );
 
 app.use("/", authRouter);
+app.use("/files", fileRouter);
 app.use("/profiles", profileRouter);
 app.use("/matches", matchRouter);
 app.use("/swipes", swipeRouter);
