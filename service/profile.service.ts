@@ -329,11 +329,13 @@ const getAllPossibleMatches = async (preference: Preference, auth: any) => {
         )
       );
   } else if (preference === "OTHER") {
-    return (await profileDb.getAllProfiles()).filter(
-      (p) => p.email != email && !swiped.includes(p.id)
-    );
+    const everyone = await profileDb.getAllProfiles();
+    if (everyone)
+      profiles.push(
+        ...everyone.filter((p) => p.email != email && !swiped.includes(p.id))
+      );
   }
-  return [];
+  return profiles;
 };
 
 export default {

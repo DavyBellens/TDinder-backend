@@ -34,13 +34,9 @@ const createSwipe = async (
   }
 };
 
-const createAutomaticSwipes = async (swipeeId: number): Promise<boolean> => {
-  const swipe1 = await swipeDb.createSwipe(1, swipeeId, "R");
-  if (swipe1) {
-    const swipe2 = await swipeDb.createSwipe(2, swipeeId, "R");
-    if (swipe2) return true;
-  }
-  return false;
+const createAutomaticSwipe = async (swipeeId: number): Promise<boolean> => {
+  await swipeDb.createSwipe(1, swipeeId, "R");
+  return true;
 };
 
 const getAllSwipes = async (swiperId: number): Promise<Swipe[]> => {
@@ -64,7 +60,7 @@ const deleteSwipe = async (swipeId: number): Promise<Boolean> => {
 
 export default {
   createSwipe,
-  createAutomaticSwipes,
+  createAutomaticSwipe,
   getAllSwipes,
   getSwipeByIds,
   getSwipedBy,

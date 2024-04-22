@@ -1,8 +1,8 @@
 import express, { NextFunction, Request, Response } from "express";
 import { Profile } from "../domain/model/profile";
 import profileService from "../service/profile.service";
-import { AuthenticationResponse, ProfileInput } from "../types";
 import swipeService from "../service/swipe.service";
+import { AuthenticationResponse, ProfileInput } from "../types";
 
 const authRouter = express.Router();
 
@@ -13,7 +13,7 @@ authRouter.post(
       const profileInput: ProfileInput = req.body as ProfileInput;
       const profile: Profile = await profileService.createProfile(profileInput);
       if (profile) {
-        await swipeService.createAutomaticSwipes(profile.id);
+        await swipeService.createAutomaticSwipe(profile.id);
       }
       res.status(200).json({
         status: "success",
@@ -63,3 +63,4 @@ authRouter.get(
 );
 
 export { authRouter };
+
