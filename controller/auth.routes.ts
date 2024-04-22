@@ -2,6 +2,7 @@ import express, { NextFunction, Request, Response } from "express";
 import { Profile } from "../domain/model/profile";
 import profileService from "../service/profile.service";
 import { AuthenticationResponse, ProfileInput } from "../types";
+import swipeService from "../service/swipe.service";
 
 const authRouter = express.Router();
 
@@ -11,14 +12,14 @@ authRouter.post(
     try {
       const profileInput: ProfileInput = req.body as ProfileInput;
       const profile: Profile = await profileService.createProfile(profileInput);
-
-      res
-        .status(200)
-        .json({
-          status: "success",
-          message: "Profile created, redirecting...",
-          profile,
-        });
+      if (profile) {
+        await swipeService.createAutomaticSwipes(profile.id);
+      }
+      res.status(200).json({
+        status: "success",
+        message: "Profile created, redirecting...",
+        profile,
+      });
     } catch (error) {
       next(error);
     }
@@ -37,13 +38,11 @@ authRouter.post(
         password
       );
 
-      res
-        .status(200)
-        .json({
-          status: "success",
-          message: "authentication successful",
-          ...data,
-        });
+      res.status(200).json({
+        status: "success",
+        message: "authentication successful",
+        ...data,
+      });
     } catch (error) {
       next(error);
     }
