@@ -2,7 +2,7 @@ import { Gender, Preference } from "@prisma/client";
 import { UnauthorizedError } from "express-jwt";
 import profileDb from "../domain/data-access/profile.db";
 import { Profile } from "../domain/model/profile";
-import { AuthenticationResponse, ProfileInput, Role } from "../types";
+import { AuthenticationResponse, ProfileInput, Role, Swipe } from "../types";
 import { generateJwtToken } from "../util/jwt";
 import { comparePasswordWithHash, hashPassword } from "../util/password";
 import matchService from "./match.service";
@@ -293,21 +293,41 @@ const getAllPossibleMatches = async (preference: Preference, auth: any) => {
     throw new Error("Invalid preference");
   const email: string = auth.email;
   const swipes = await swipeService.getAllSwipes(auth.id);
-  let swiped = [];
+  let swiped: number[] = [];
   if (swipes) swiped = swipes.map((s) => s.swipeeId);
+  const profiles: Profile[] = [];
+  const davy = await profileDb.getProfileById(1);
+  if (davy) profiles.push(davy);
   if (preference === "FEMALE") {
-    return (await profileDb.getAllProfilesByGender("WOMAN")).filter(
-      (p) => p.email != email && !swiped.includes(p.id)
-    );
+    const womenProfiles = await profileDb.getAllProfilesByGender("WOMAN");
+    if (womenProfiles) {
+      profiles.push(
+        ...womenProfiles.filter(
+          (p) => p.email != email && !swiped.includes(p.id)
+        )
+      );
+    }
   } else if (preference === "MALE") {
-    return (await profileDb.getAllProfilesByGender("MAN")).filter(
-      (p) => p.email != email && !swiped.includes(p.id)
-    );
+    const maleProfiles = await profileDb.getAllProfilesByGender("MAN");
+    if (maleProfiles) {
+      profiles.push(
+        ...maleProfiles.filter(
+          (p) => p.email != email && !swiped.includes(p.id)
+        )
+      );
+    }
   } else if (preference === "BOTH") {
-    return [
-      ...(await profileDb.getAllProfilesByGender("MAN")),
-      ...(await profileDb.getAllProfilesByGender("WOMAN")),
-    ].filter((p) => p.email != email && !swiped.includes(p.id));
+    const womenProfiles = await profileDb.getAllProfilesByGender("WOMAN");
+    const maleProfiles = await profileDb.getAllProfilesByGender("MAN");
+    if (womenProfiles && maleProfiles)
+      profiles.push(
+        ...womenProfiles.filter(
+          (p) => p.email != email && !swiped.includes(p.id)
+        ),
+        ...maleProfiles.filter(
+          (p) => p.email != email && !swiped.includes(p.id)
+        )
+      );
   } else if (preference === "OTHER") {
     return (await profileDb.getAllProfiles()).filter(
       (p) => p.email != email && !swiped.includes(p.id)
