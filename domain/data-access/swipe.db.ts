@@ -25,7 +25,7 @@ const getAllSwipes = async (id: number): Promise<Swipe[]> => {
   try {
     const swipes = await database.swipe.findMany({
       where: {
-        swiperId: parseInt(id as unknown as string),
+        swiperId: id,
       },
     });
     return swipes ? swipes.map((s) => Swipe.from(s)) : null;
@@ -38,7 +38,7 @@ const getSwipedBy = async (id: number): Promise<Swipe[]> => {
   try {
     const swipes = await database.swipe.findMany({
       where: {
-        swipeeId: parseInt(id as unknown as string),
+        swipeeId: id,
       },
     });
     return swipes ? swipes.map((s) => Swipe.from(s)) : null;
