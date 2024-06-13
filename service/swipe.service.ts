@@ -34,10 +34,10 @@ const createSwipe = async (
   }
 };
 
-const createAutomaticSwipe = async (swipeeId: number): Promise<boolean> => {
-  await swipeDb.createSwipe(1, swipeeId, "R");
-  return true;
-};
+// const createAutomaticSwipe = async (swipeeId: number): Promise<boolean> => {
+//   await swipeDb.createSwipe(1, swipeeId, "R");
+//   return true;
+// };
 
 const getAllSwipes = async (swiperId: number): Promise<Swipe[]> => {
   return await swipeDb.getAllSwipes(swiperId);
@@ -60,7 +60,7 @@ const deleteSwipe = async (swipeId: number): Promise<Boolean> => {
 
 export default {
   createSwipe,
-  createAutomaticSwipe,
+  // createAutomaticSwipe,
   getAllSwipes,
   getSwipeByIds,
   getSwipedBy,
