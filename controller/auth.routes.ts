@@ -12,9 +12,9 @@ authRouter.post(
     try {
       const profileInput: ProfileInput = req.body as ProfileInput;
       const profile: Profile = await profileService.createProfile(profileInput);
-      if (profile) {
-        await swipeService.createAutomaticSwipe(profile.id);
-      }
+      // if (profile) {
+      //   await swipeService.createAutomaticSwipe(profile.id);
+      // }
       res.status(200).json({
         status: "success",
         message: "Profile created, redirecting...",
