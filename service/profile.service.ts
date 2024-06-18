@@ -235,7 +235,7 @@ const updateProfile = async (
 };
 
 const deleteProfile = async (
-  inputProfileId: string | number,
+  inputProfileId: number,
   auth: any
 ): Promise<Profile> => {
   const profileId = inputProfileId as number;

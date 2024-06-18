@@ -116,20 +116,8 @@ profileRouter.delete(
     next: NextFunction
   ) => {
     try {
-      const inputProfileId: string = req.params.profileId;
+      const inputProfileId: number = parseInt(req.params.profileId as string);
       const auth: AuthenticationResponse = req.auth;
-      if (inputProfileId) {
-        const swipes = await swipeService.getAllSwipes(
-          inputProfileId as unknown as number
-        );
-        if (swipes && swipes.length > 0) {
-          await Promise.all(
-            swipes.map(async (swipe) => {
-              await swipeService.deleteSwipe(swipe.id);
-            })
-          );
-        }
-      }
       const deletedProfile: Profile = await profileService.deleteProfile(
         inputProfileId,
         auth
