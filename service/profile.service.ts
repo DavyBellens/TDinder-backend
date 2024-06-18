@@ -238,8 +238,8 @@ const deleteProfile = async (
   inputProfileId: string | number,
   auth: any
 ): Promise<Profile> => {
-  const profileId: number = parseInt(inputProfileId as string);
-  const realProfileId: number = parseInt(auth.id as string);
+  const profileId = inputProfileId as number;
+  const realProfileId = auth.id as number;
   const role: Role = auth.role;
   if (realProfileId !== profileId && role != "ADMIN") {
     throw new Error(
@@ -248,7 +248,7 @@ const deleteProfile = async (
   }
   await getProfileById(profileId);
   const matches = await matchService.getAllMatchesFromProfile(
-    profileId as unknown as string,
+    String(profileId),
     auth
   );
   matches.forEach(async (m) => {

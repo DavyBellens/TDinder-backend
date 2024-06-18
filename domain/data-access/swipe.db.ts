@@ -34,7 +34,7 @@ const getAllSwipes = async (id: number): Promise<Swipe[]> => {
   }
 };
 
-const getSwipedBy = async (id: number): Promise<Swipe[]> => {
+const getSwipedBy = async (id: number): Promise<Swipe[] | null> => {
   try {
     const swipes = await database.swipe.findMany({
       where: {
@@ -44,13 +44,14 @@ const getSwipedBy = async (id: number): Promise<Swipe[]> => {
     return swipes ? swipes.map((s) => Swipe.from(s)) : null;
   } catch (error) {
     console.log(error);
+    return null;
   }
 };
 
 const getSwipeByIds = async (
   swiperId: number,
   swipeeId: number
-): Promise<Swipe> => {
+): Promise<Swipe | null> => {
   try {
     const swipe = await database.swipe.findFirst({
       where: {
@@ -64,6 +65,7 @@ const getSwipeByIds = async (
     return swipe ? Swipe.from(swipe) : null;
   } catch (error) {
     console.log(error);
+    return null;
   }
 };
 
@@ -71,12 +73,13 @@ const deleteSwipe = async (id: number): Promise<Boolean> => {
   try {
     await database.swipe.delete({
       where: {
-        id: parseInt(id as unknown as string),
+        id,
       },
     });
     return true;
   } catch (error) {
     console.log(error);
+    return false;
   }
 };
 
