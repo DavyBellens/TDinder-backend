@@ -79,13 +79,12 @@ const unmatch = async (
 };
 
 const getAllMatchesFromProfile = async (
-  profileId: string,
+  profileId: number,
   auth: AuthenticatedToken
 ): Promise<Match[]> => {
-  if (auth.id != profileId)
+  if ((auth.id as unknown as number) != profileId)
     throw new Error("You can't view other people's matches");
-  const profile = await profileService.getProfileById(parseInt(profileId));
-  return await matchDb.getMatchesFromProfile(parseInt(profileId));
+  return await matchDb.getMatchesFromProfile(profileId);
 };
 
 export default {

@@ -247,10 +247,7 @@ const deleteProfile = async (
     );
   }
   await getProfileById(profileId);
-  const matches = await matchService.getAllMatchesFromProfile(
-    String(profileId),
-    auth
-  );
+  const matches = await matchService.getAllMatchesFromProfile(profileId, auth);
   matches.forEach(async (m) => {
     await matchService.deleteMatch(m.id, auth);
   });
