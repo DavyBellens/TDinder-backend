@@ -241,7 +241,7 @@ const deleteProfile = async (
   const profileId = inputProfileId as number;
   const realProfileId = auth.id as number;
   const role: Role = auth.role;
-  if (realProfileId != profileId && role != "ADMIN") {
+  if (realProfileId != profileId) {
     throw new Error(
       "Wtf are you trying to do? No present from santa this year!!!"
     );
